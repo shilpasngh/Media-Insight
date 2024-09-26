@@ -1,2 +1,2 @@
 # Media-Insight
-This is a use case description file.
+This is a branch for Use case 1: Text-to-Image Generation​
