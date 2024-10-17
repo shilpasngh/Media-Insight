@@ -1,6 +1,10 @@
 # Media-Insight
 Use case 1: Text-to-Image Generation​
 
+# add a DNS record in /etc/hosts
+```sh
+sudo echo "127.0.0.1    kafka_mediainsight" >> /etc/hosts
+```
 
 # db and message queue
 Install Docker: [Docker.com](https://www.docker.com/)
