@@ -1,16 +1,22 @@
 # Media-Insight
 This is a branch for Use case 1: Text-to-Image Generation​
 
+# frontend
+```sh
+cd frontend/mediainsight_ui
+npm install
+npm start
+```
 
-# building the Flask app
-The dependencies are saved in "requirements.txt"
+# backend
+```sh
+cd backend
+pip install -r requirements.txt
+python app.py
+```
 
-`pip install -r requirements.txt` to install dependencies
 
-# running the app
-`python app.py` to run Flask app
-
-# api endpoint
+# backend api endpoint
 DEBUG mode, localhost on port 5000
 Running on http://127.0.0.1:5000
 
