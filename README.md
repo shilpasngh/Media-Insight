@@ -15,9 +15,14 @@ pip install -r requirements.txt
 flask run
 ```
 
-## backend consumer (consume kafka message and run ml task)
+# backend consumer (consume kafka message and run ml task)
 ```sh
 python run_consumer.py
+```
+
+# db and message queue
+```sh
+docker compose up -d
 ```
 
 # backend api endpoint
