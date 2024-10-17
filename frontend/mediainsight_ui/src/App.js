@@ -6,6 +6,7 @@ function App() {
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [taskId, setTaskId] = useState(null);
+  const [manualTaskId, setManualTaskId] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +25,29 @@ function App() {
 
     // The server returns a task ID for polling
     setTaskId(data.task_id);
+  };
+
+  const handleManualFetch = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setImageUrl(null);
+
+    try {
+      const response = await fetch(`/api/v1/generate-image/${manualTaskId}`);
+      const data = await response.json();
+
+      if (data.data.image !== undefined) {
+        setImageUrl(data.data.image);
+      } else {
+        console.error('Image not found for the given task ID');
+        // You might want to add some user feedback here
+      }
+    } catch (error) {
+      console.error('Error fetching image:', error);
+      // You might want to add some user feedback here
+    }
+
+    setLoading(false);
   };
 
   // Poll the server continuously until the image is ready
@@ -70,6 +94,22 @@ function App() {
           {loading ? 'Generating...' : 'Generate Image'}
         </button>
       </form>
+      
+      <h2>Fetch Image by Task ID</h2>
+      <form onSubmit={handleManualFetch}>
+        <input
+          type="text"
+          value={manualTaskId}
+          onChange={(e) => setManualTaskId(e.target.value)}
+          placeholder="Enter task ID"
+          required
+          disabled={loading}
+        />
+        <button type="submit" disabled={loading}>
+          Fetch Image
+        </button>
+      </form>
+      
       {imageUrl && <img src={imageUrl} alt="Generated" />}
     </div>
   );
