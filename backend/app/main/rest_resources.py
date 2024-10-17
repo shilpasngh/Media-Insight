@@ -7,18 +7,17 @@ from bson.objectid import ObjectId
 from confluent_kafka import Producer
 import json
 import logging
+from app import db
 
 
 def save_prompt_text(prompt_text):
-    client = pymongo.MongoClient(Config.MONGODB_URI)
-    db = client[Config.MONGODB_DB]
+    
     collection = db['text2image']
     result = collection.insert_one({'text': prompt_text})
     return str(result.inserted_id)
 
 def get_task(id):
-    client = pymongo.MongoClient(Config.MONGODB_URI)
-    db = client[Config.MONGODB_DB]
+    
     collection = db['text2image']
     result = collection.find_one({'_id': ObjectId(id)})
     return result
@@ -44,10 +43,12 @@ class Text2Image(Resource):
 
     def get(self, id=None):
         ret = get_task(id)
-        # print(id, ret)
+        ret.pop('_id', None)
+        if 'image' in ret:
+            ret['image'] = f"http://localhost:5000/static/images/{ret['image']}"
         return {
             'task_id': id,
-            'data': ret['text']
+            'data': ret
         }
 
     def post(self):
@@ -56,7 +57,7 @@ class Text2Image(Resource):
             prompt_text = request.json['prompt_text']
             task_id = save_prompt_text(prompt_text)
             # publish task to Kafka topic: text2image
-            send_to_kafka(self.kafka_topic, {'task_id': task_id, 'prompt_text': prompt_text})
+            send_to_kafka(self.kafka_topic, {'task_id': task_id, 'prompt_text': prompt_text, 'task_type': 'text2image'})
             return {'task_id': task_id}, 201
         except Exception as error:
             return {'error': str(error)}, 400
