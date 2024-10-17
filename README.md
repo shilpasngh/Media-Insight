@@ -3,7 +3,9 @@ Use case 1: Text-to-Image Generation​
 
 
 # db and message queue
+Install Docker: [Docker.com](https://www.docker.com/)
 ```sh
+cd backend
 docker compose up -d
 ```
 
