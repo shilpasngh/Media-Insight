@@ -12,7 +12,7 @@ npm start
 ```sh
 cd backend
 pip install -r requirements.txt
-python app.py
+flask run
 ```
 
 ## backend consumer (consume kafka message and run ml task)
