@@ -55,13 +55,16 @@ function App() {
       )}
       <h1>Text to Image Generator</h1>
       <form onSubmit={handleSubmit}>
-        <input
+        <textarea
           type="text"
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           placeholder="Enter text to generate image"
           required
           disabled={loading} // Disable input when loading
+          rows={3}
+          cols={60}
+          className="large-input"
         />
         <button type="submit" disabled={loading}>
           {loading ? 'Generating...' : 'Generate Image'}
