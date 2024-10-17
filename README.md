@@ -18,6 +18,7 @@ npm start
 ```sh
 cd backend
 pip install -r requirements.txt
+pip install -U diffusers accelerate transformers -q
 flask run
 ```
 
