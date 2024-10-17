@@ -8,13 +8,17 @@ npm install
 npm start
 ```
 
-# backend
+# backend api server
 ```sh
 cd backend
 pip install -r requirements.txt
 python app.py
 ```
 
+## backend consumer (consume kafka message and run ml task)
+```sh
+python run_consumer.py
+```
 
 # backend api endpoint
 DEBUG mode, localhost on port 5000
