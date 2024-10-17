@@ -40,5 +40,5 @@ e.x.
 # creating the text-to-image task
 `curl -X POST http://127.0.0.1:5000/api/v1/generate-image`
 # getting the task result
-`curl -X GET http://127.0.0.1:5000/api/v1/generate-image/1`
+`curl -X GET http://127.0.0.1:5000/api/v1/generate-image/${task_id}`
 
