@@ -25,6 +25,10 @@ python run_consumer.py
 docker compose up -d
 ```
 
+# frontend running on http://localhost:3000
+visit http://localhost:3000 for the ui
+
+
 # backend api endpoint
 DEBUG mode, localhost on port 5000
 Running on http://127.0.0.1:5000

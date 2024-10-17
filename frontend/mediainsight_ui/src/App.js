@@ -52,10 +52,13 @@ function App() {
 
   // Poll the server continuously until the image is ready
   useEffect(() => {
-    if (!taskId) return;
+    if (!taskId) {
+      console.log('no task id set yet');
+      return;
+    }
 
     const interval = setInterval(async () => {
-      console.log('polling');
+      console.log(`polling ${taskId}`);
       const response = await fetch(`/api/v1/generate-image/${taskId}`);
       const data = await response.json();
 
@@ -63,6 +66,7 @@ function App() {
         setImageUrl(data.data.image);
         setLoading(false);
         clearInterval(interval); // Stop polling when the image is ready
+        console.log(`image ready ${data.data.image}`);
       }
     }, 1000); // Poll every second
 
