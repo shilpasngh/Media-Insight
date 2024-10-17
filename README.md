@@ -1,5 +1,11 @@
 # Media-Insight
-This is a branch for Use case 1: Text-to-Image Generation​
+Use case 1: Text-to-Image Generation​
+
+
+# db and message queue
+```sh
+docker compose up -d
+```
 
 # frontend
 ```sh
@@ -12,6 +18,7 @@ npm start
 ```sh
 cd backend
 pip install -r requirements.txt
+pip install -U diffusers accelerate transformers -q
 flask run
 ```
 
@@ -20,10 +27,6 @@ flask run
 python run_consumer.py
 ```
 
-# db and message queue
-```sh
-docker compose up -d
-```
 
 # frontend running on http://localhost:3000
 visit http://localhost:3000 for the ui
