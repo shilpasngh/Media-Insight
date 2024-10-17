@@ -1,3 +1,11 @@
+# install dependencies
+```sh
+pip install -r requirements.txt
+```
+```sh
+pip install -U diffusers accelerate transformers -q
+```
+
 # run MongoDB and Kafka locally in docker
 ```sh
 docker compose up -d
