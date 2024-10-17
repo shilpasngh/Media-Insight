@@ -6,10 +6,12 @@ certifi==2024.8.30
 charset-normalizer==3.4.0
 click==8.1.7
 comm==0.2.2
+confluent-kafka==2.6.0
 debugpy==1.8.7
 decorator==5.1.1
 diffusers==0.30.3
 distlib==0.3.9
+dnspython==2.7.0
 executing==2.1.0
 filelock==3.16.1
 Flask==3.0.3
@@ -55,6 +57,7 @@ psutil==6.0.0
 ptyprocess==0.7.0
 pure_eval==0.2.3
 Pygments==2.18.0
+pymongo==4.10.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2024.2
