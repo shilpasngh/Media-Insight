@@ -27,14 +27,7 @@ docker exec --workdir /opt/bitnami/kafka/bin/ -it kafka_mediainsight sh
 ./kafka-topics.sh --bootstrap-server :9092 --create --topic generate-text
 ```
 
-## 5. start frontend
-```sh
-cd frontend/mediainsight_ui
-npm install
-npm start
-```
-
-## 6. start backend api server
+## 5. start backend api server
 ```sh
 cd backend
 pip install -r requirements.txt
@@ -42,9 +35,16 @@ pip install -U diffusers accelerate transformers -q
 flask run
 ```
 
-## 7. backend consumer (consume kafka message and run ml task)
+## 6. backend consumer (consume kafka message and run ml task)
 ```sh
 python run_consumer.py
+```
+
+## 7. start frontend
+```sh
+cd frontend/mediainsight_ui
+npm install
+npm start
 ```
 
 # Usage
