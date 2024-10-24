@@ -10,7 +10,6 @@ saving us the trouble to download large library again.
 ## 1. web, db and message queue
 Install Docker: [Docker.com](https://www.docker.com/)
 ```sh
-cd backend
 docker compose up -d
 ```
 
