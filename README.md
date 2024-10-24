@@ -1,50 +1,28 @@
 # Media-Insight
-Use case 1: Text-to-Image Generation​
+Use case 1: Text-to-Image Generation
+
 
 # How to start
+most of the services are containerized now,
+except for consumer and model, 
+saving us the trouble to download large library again.
 
-## 1. add a DNS record in /etc/hosts
-```sh
-sudo echo "127.0.0.1    kafka_mediainsight" >> /etc/hosts
-```
-
-## 2. db and message queue
+## 1. web, db and message queue
 Install Docker: [Docker.com](https://www.docker.com/)
 ```sh
 cd backend
 docker compose up -d
 ```
 
-## 3. enter the Kafka container
-```sh
-docker exec --workdir /opt/bitnami/kafka/bin/ -it kafka_mediainsight sh
-```
-
-## 4. create a topic
-```sh
-./kafka-topics.sh --bootstrap-server :9092 --create --topic text2image
-./kafka-topics.sh --bootstrap-server :9092 --create --topic generate-description
-./kafka-topics.sh --bootstrap-server :9092 --create --topic generate-text
-```
-
-## 5. start backend api server
+## 2. install gen ai library
 ```sh
 cd backend
-pip install -r requirements.txt
-pip install -U diffusers accelerate transformers -q
-flask run
+pip install -r requirements-genai.txt
 ```
 
-## 6. backend consumer (consume kafka message and run ml task)
+## 3. backend consumer (consume kafka message and run ml task)
 ```sh
 python run_consumer.py
-```
-
-## 7. start frontend
-```sh
-cd frontend/mediainsight_ui
-npm install
-npm start
 ```
 
 # Usage
