@@ -24,7 +24,7 @@ def get_task(id):
 
 def send_to_kafka(topic, message):
     message = json.dumps(message).encode('utf-8')
-    producer = Producer({'bootstrap.servers': ':9092'})
+    producer = Producer({'bootstrap.servers': Config.KAFKA_BOOTSTRAP_SERVERS})
     producer.produce(topic, message, callback=delivery_report)
     producer.flush()
 
