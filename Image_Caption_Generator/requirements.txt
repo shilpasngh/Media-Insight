@@ -1,6 +1,0 @@
-flask
-torch
-transformers
-Pillow
-torchvision
-Werkzeug==2.0.3
