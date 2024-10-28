@@ -34,11 +34,11 @@ Step 1: Set Up the Backend (Flask)
 1. Install Python dependencies:
 
    - Open a terminal in the project root directory (where app.py is located) and run:
-     pip install -r requirements.txt
+     - pip install -r requirements.txt
 
 2. Run the Flask server:
    - Start the Flask backend server by running:
-     python app.py
+     - python app.py
 
 Step 2: Set Up the Frontend (React)
 
@@ -46,10 +46,10 @@ Step 2: Set Up the Frontend (React)
 
    - Navigate to your project folder in the terminal.
    - Use the following command to create a React app named frontend
-     npx create-react-app frontend
-     cd frontend
-     npm install
-     npm start
+     - npx create-react-app frontend
+     - cd frontend
+     - npm install
+     - npm start
 
    This will start the React frontend on http://localhost:3000
 
