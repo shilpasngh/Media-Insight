@@ -50,7 +50,7 @@ def kafka_consumer():
 
                     # Process the message here (e.g., generate image from prompt)
                     # ...
-                    # use case 1: {'task_id': '6720dee630e131069b2f7c1c', 'prompt_text': 'ooo', 'task_type': 'text2image'}
+                    # use case 1: {'task_id': '6720dee630e131069b2f7c1c', 'text': 'ooo', 'task_type': 'text2image'}
                     mapped_model = model_mapping[message_data['task_type']]
                     model = mapped_model(message_data)
                     model.run()

@@ -25,7 +25,7 @@ class TaskModel(ABC):
         self.message_data = message_data
     
     @abstractmethod
-    def run():
+    def run(self):
         pass
 
 # Use Case 1: Generate an image from a text prompt
@@ -52,7 +52,7 @@ class Text2ImageModel(TaskModel):
 
         # Define the prompt and negative prompt
         # prompt = "A mecha robot in a favela in expressionist style, with a sunset in the background"
-        prompt = data['prompt_text']
+        prompt = data['text']
         negative_prompt = ""
 
         # Generate the image on CPU
