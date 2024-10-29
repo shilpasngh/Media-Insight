@@ -56,10 +56,10 @@ class Text2Image(Resource):
     def post(self):
         try:
             # get prompt text from request
-            prompt_text = request.json['prompt_text']
-            task_id = save_to_mongodb('text2image', {'text': prompt_text})
+            text = request.json['text']
+            task_id = save_to_mongodb('text2image', {'text': text})
             # publish task to Kafka topic: text2image
-            send_to_kafka(self.kafka_topic, {'task_id': task_id, 'prompt_text': prompt_text})
+            send_to_kafka(self.kafka_topic, {'task_id': task_id, 'text': text})
             return {'task_id': task_id}, 201
         except Exception as error:
             return {'error': str(error)}, 400
