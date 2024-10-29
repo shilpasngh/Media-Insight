@@ -1,16 +1,23 @@
 services:
-  react_app:
-    container_name: react_mediainsight
-    build: ./frontend/mediainsight_ui
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend/mediainsight_ui:/usr/src/app
+  ml_models:
+    image: kkzxak47/ml_models_mediainsight:latest
+    container_name: ml_models_mediainsight
+    build:
+      context: ./backend
+      dockerfile: Dockerfile-ml-models
     environment:
-      - CHOKIDAR_USEPOLLING=true
+      - MONGODB_URI=mongodb://mongoadmin:mongosecret@mongodb:27017/
+      - MONGODB_DB=mediainsight
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9094
     networks:
       - mediainsight_network
+    depends_on:
+      - mongodb
+      - kafka
+    volumes:
+      - ./backend:/app
   web:
+    image: kkzxak47/flask_mediainsight:latest
     container_name: flask_mediainsight
     build: ./backend
     ports:
@@ -29,6 +36,22 @@ services:
       - SQLALCHEMY_TRACK_MODIFICATIONS=False
       - LOG_TO_STDOUT=True
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9094
+    networks:
+      - mediainsight_network
+    depends_on:
+      - mongodb
+      - kafka
+  react_app:
+    image: kkzxak47/react_mediainsight:latest
+    container_name: react_mediainsight
+    build: ./frontend/mediainsight_ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/mediainsight_ui:/usr/src/app
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - REACT_APP_PROXY=http://web:5000
     networks:
       - mediainsight_network
   # MongoDB Service

@@ -19,7 +19,6 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-
 class TaskModel(ABC):
     def __init__(self, message_data):
         self.message_data = message_data
@@ -60,7 +59,7 @@ class Text2ImageModel(TaskModel):
 
         # Display or return the image
         image_path = f"{data['task_id']}.png"
-        image.save("static/images/" + image_path)
+        image.save(f"{basedir}/static/images/" + image_path)
 
         self.update_task(data['task_id'], image_path)
 
