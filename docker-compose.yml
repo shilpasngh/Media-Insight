@@ -11,18 +11,11 @@ services:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9094
     networks:
       - mediainsight_network
-  react_app:
-    container_name: react_mediainsight
-    build: ./frontend/mediainsight_ui
-    image: kkzxak47/react_mediainsight
-    ports:
-      - "3000:3000"
+    depends_on:
+      - mongodb
+      - kafka
     volumes:
-      - ./frontend/mediainsight_ui:/usr/src/app
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    networks:
-      - mediainsight_network
+      - ./backend:/app
   web:
     container_name: flask_mediainsight
     build: ./backend
@@ -43,6 +36,21 @@ services:
       - SQLALCHEMY_TRACK_MODIFICATIONS=False
       - LOG_TO_STDOUT=True
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9094
+    networks:
+      - mediainsight_network
+    depends_on:
+      - mongodb
+      - kafka
+  react_app:
+    container_name: react_mediainsight
+    build: ./frontend/mediainsight_ui
+    image: kkzxak47/react_mediainsight
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/mediainsight_ui:/usr/src/app
+    environment:
+      - CHOKIDAR_USEPOLLING=true
     networks:
       - mediainsight_network
   # MongoDB Service
