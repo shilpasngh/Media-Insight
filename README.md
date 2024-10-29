@@ -39,7 +39,7 @@ e.x.
 ```sh
 curl --header "Content-Type: application/json" \
   -X POST \
-  --data '{"prompt_text": "robot"}' \
+  --data '{"text": "robot"}' \
   http://127.0.0.1:5000/api/v1/generate-image
 ```
 # get the task result
