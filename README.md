@@ -3,26 +3,16 @@ Use case 1: Text-to-Image Generation
 
 
 # How to start
-most of the services are containerized now,
-except for consumer and model, 
-saving us the trouble to download large library again.
+All of the services are containerized now.
 
-## 1. web, db and message queue
 Install Docker: [Docker.com](https://www.docker.com/)
+
+## Start the services (Please make sure ports 3000, 5000, 8080, 9092, 27017 are available)
+
 ```sh
 docker compose up -d
 ```
 
-## 2. install gen ai library
-```sh
-cd backend
-pip install -r requirements-genai.txt
-```
-
-## 3. backend consumer (consume kafka message and run ml task)
-```sh
-python run_consumer.py
-```
 
 # Usage
 
