@@ -1,12 +1,10 @@
 from flask_restful import Resource
 import random
 from flask import request
-import pymongo
 from config import Config
 from bson.objectid import ObjectId
 from confluent_kafka import Producer
 import json
-import logging
 from app import db
 
 
