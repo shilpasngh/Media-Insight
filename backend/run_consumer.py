@@ -1,7 +1,7 @@
 from confluent_kafka import Consumer, KafkaError
 # Updated import path
 import json
-
+from config import Config
 
 
 from ml_models import logger, Text2ImageModel, GenerateDescriptionModel, GenerateTextModel
@@ -17,8 +17,8 @@ model_mapping = {
 def kafka_consumer():
     # Configure the consumer
     consumer_config = {
-        'bootstrap.servers': "localhost:9092",
-        'group.id': 'text2image_consumer_group',
+        'bootstrap.servers': Config.KAFKA_BOOTSTRAP_SERVERS,
+        'group.id': 'ml_models_consumer_group',
         'auto.offset.reset': 'earliest',
         'enable.auto.commit': False  # Disable auto-commit
     }
@@ -27,7 +27,7 @@ def kafka_consumer():
     consumer = Consumer(consumer_config)
 
     # Subscribe to the topic
-    consumer.subscribe(['text2image'])
+    consumer.subscribe(['text2image', 'generate-description', 'generate-text'])
 
     try:
         logger.info('Starting consumer')

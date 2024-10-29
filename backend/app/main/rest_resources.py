@@ -11,18 +11,21 @@ from app import db
 
 
 def save_prompt_text(prompt_text):
-    
     collection = db['text2image']
     result = collection.insert_one({'text': prompt_text})
     return str(result.inserted_id)
 
 def get_task(id):
-    
     collection = db['text2image']
     result = collection.find_one({'_id': ObjectId(id)})
     return result
 
+
 def send_to_kafka(topic, message):
+    topic_types = [Text2Image.kafka_topic, GenerateDescription.kafka_topic, GenerateText.kafka_topic]
+    if topic not in topic_types:
+        raise ValueError(f"Invalid topic type. Must be one of: {topic_types}")
+    message['task_type'] = topic
     message = json.dumps(message).encode('utf-8')
     producer = Producer({'bootstrap.servers': Config.KAFKA_BOOTSTRAP_SERVERS})
     producer.produce(topic, message, callback=delivery_report)
@@ -57,7 +60,7 @@ class Text2Image(Resource):
             prompt_text = request.json['prompt_text']
             task_id = save_prompt_text(prompt_text)
             # publish task to Kafka topic: text2image
-            send_to_kafka(self.kafka_topic, {'task_id': task_id, 'prompt_text': prompt_text, 'task_type': 'text2image'})
+            send_to_kafka(self.kafka_topic, {'task_id': task_id, 'prompt_text': prompt_text})
             return {'task_id': task_id}, 201
         except Exception as error:
             return {'error': str(error)}, 400
