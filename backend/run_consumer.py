@@ -1,29 +1,20 @@
-import os
-from dotenv import load_dotenv
-
 from confluent_kafka import Consumer, KafkaError
 # Updated import path
 import json
-import logging
-import torch
-from diffusers import AmusedPipeline
-from bson import ObjectId
-from config import Config
-import pymongo
 
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-path = os.path.join(basedir, '.env')
-load_dotenv(path)
 
-client = pymongo.MongoClient(Config.MONGODB_URI)
-db = client[Config.MONGODB_DB]
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from ml_models import logger, Text2ImageModel, GenerateDescriptionModel, GenerateTextModel
 
 
-def kafka_consumer(db):
+model_mapping = {
+    'text2image': Text2ImageModel,
+    'generate-description': GenerateDescriptionModel,
+    'generate-text': GenerateTextModel,
+}
+
+
+def kafka_consumer():
     # Configure the consumer
     consumer_config = {
         'bootstrap.servers': "localhost:9092",
@@ -59,7 +50,10 @@ def kafka_consumer(db):
 
                     # Process the message here (e.g., generate image from prompt)
                     # ...
-                    text2image_task(db, message_data)
+                    # use case 1: {'task_id': '6720dee630e131069b2f7c1c', 'prompt_text': 'ooo', 'task_type': 'text2image'}
+                    mapped_model = model_mapping[message_data['task_type']]
+                    model = mapped_model(message_data)
+                    model.run()
 
                     # Manually commit the offset to mark the message as processed and delete it
                     consumer.commit(msg)
@@ -77,38 +71,5 @@ def kafka_consumer(db):
         consumer.close()
 
 
-def update_task(db, id, image_path):
-    collection = db['text2image']
-    result = collection.find_one({'_id': ObjectId(id)})
-    # write the name of the image to the database
-    collection.update_one({'_id': ObjectId(id)}, {'$set': {'image': image_path}})
-
-    return result
-
-
-def text2image_task(db, data):
-    # Load the model in fp32 precision (default for CPU)
-    pipe = AmusedPipeline.from_pretrained(
-        "amused/amused-256", torch_dtype=torch.float32
-    )
-
-    # Move the model to CPU
-    pipe = pipe.to("cpu")
-
-    # Define the prompt and negative prompt
-    # prompt = "A mecha robot in a favela in expressionist style, with a sunset in the background"
-    prompt = data['prompt_text']
-    negative_prompt = ""
-
-    # Generate the image on CPU
-    image = pipe(prompt, negative_prompt=negative_prompt, generator=torch.manual_seed(0)).images[0]
-
-    # Display or return the image
-    image_path = f"{data['task_id']}.png"
-    image.save("static/images/" + image_path)
-
-    update_task(db, data['task_id'], image_path)
-
-
 if __name__ == '__main__':
-    kafka_consumer(db)
+    kafka_consumer()
