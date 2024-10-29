@@ -3,7 +3,8 @@ services:
     container_name: ml_models_mediainsight
     build:
       context: ./backend
-      dockerfile: ./backend/Dockerfile-ml-models
+      dockerfile: Dockerfile-ml-models
+    image: kkzxak47/ml_models_mediainsight
     environment:
       - MONGODB_URI=mongodb://mongoadmin:mongosecret@mongodb:27017/
       - MONGODB_DB=mediainsight
@@ -13,6 +14,7 @@ services:
   react_app:
     container_name: react_mediainsight
     build: ./frontend/mediainsight_ui
+    image: kkzxak47/react_mediainsight
     ports:
       - "3000:3000"
     volumes:
@@ -24,6 +26,7 @@ services:
   web:
     container_name: flask_mediainsight
     build: ./backend
+    image: kkzxak47/flask_mediainsight
     ports:
       - "5000:5000"
     volumes:
