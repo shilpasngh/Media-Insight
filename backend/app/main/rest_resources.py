@@ -10,14 +10,14 @@ import logging
 from app import db
 
 
-def save_prompt_text(prompt_text):
-    collection = db['text2image']
-    result = collection.insert_one({'text': prompt_text})
+def save_to_mongodb(collection_name, data):
+    collection = db[collection_name]
+    result = collection.insert_one(data)
     return str(result.inserted_id)
 
-def get_task(id):
-    collection = db['text2image']
-    result = collection.find_one({'_id': ObjectId(id)})
+def get_task_from_mongodb(collection_name, _id):
+    collection = db[collection_name]
+    result = collection.find_one({'_id': ObjectId(_id)})
     return result
 
 
@@ -43,9 +43,10 @@ def delivery_report(err, msg):
 
 class Text2Image(Resource):
     kafka_topic = 'text2image'
+    collection_name = kafka_topic
 
     def get(self, id=None):
-        ret = get_task(id)
+        ret = get_task_from_mongodb(self.collection_name, id)
         ret.pop('_id', None)
         if 'image' in ret:
             ret['image'] = f"http://localhost:5000/static/images/{ret['image']}"
@@ -58,7 +59,7 @@ class Text2Image(Resource):
         try:
             # get prompt text from request
             prompt_text = request.json['prompt_text']
-            task_id = save_prompt_text(prompt_text)
+            task_id = save_to_mongodb('text2image', {'text': prompt_text})
             # publish task to Kafka topic: text2image
             send_to_kafka(self.kafka_topic, {'task_id': task_id, 'prompt_text': prompt_text})
             return {'task_id': task_id}, 201
@@ -68,6 +69,7 @@ class Text2Image(Resource):
 
 class GenerateDescription(Resource):
     kafka_topic = 'generate-description'
+    collection_name = kafka_topic
 
     def get(self, id=None):
         return {
@@ -83,6 +85,7 @@ class GenerateDescription(Resource):
 
 class GenerateText(Resource):
     kafka_topic = 'generate-text'
+    collection_name = kafka_topic
 
     def get(self, id=None):
         return {'task_id': id }
