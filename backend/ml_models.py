@@ -25,7 +25,7 @@ class TaskModel(ABC):
         self.message_data = message_data
     
     @abstractmethod
-    def run():
+    def run(self):
         pass
 
 # Use Case 1: Generate an image from a text prompt
