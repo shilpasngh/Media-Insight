@@ -6,6 +6,10 @@ from bson.objectid import ObjectId
 from confluent_kafka import Producer
 import json
 from app import db
+import os
+
+basedir = os.path.abspath(os.path.dirname(__file__))
+upload_path = os.path.join(basedir, '../../static/descriptions_images')
 
 
 def save_to_mongodb(collection_name, data):
@@ -18,7 +22,6 @@ def get_task_from_mongodb(collection_name, _id):
     result = collection.find_one({'_id': ObjectId(_id)})
     return result
 
-
 def send_to_kafka(topic, message):
     topic_types = [Text2Image.kafka_topic, GenerateDescription.kafka_topic, GenerateText.kafka_topic]
     if topic not in topic_types:
@@ -28,7 +31,6 @@ def send_to_kafka(topic, message):
     producer = Producer({'bootstrap.servers': Config.KAFKA_BOOTSTRAP_SERVERS})
     producer.produce(topic, message, callback=delivery_report)
     producer.flush()
-
 
 def delivery_report(err, msg):
     """ Called once for each message produced to indicate delivery result.
@@ -70,16 +72,41 @@ class GenerateDescription(Resource):
     collection_name = kafka_topic
 
     def get(self, id=None):
+        ret = get_task_from_mongodb(self.collection_name, id)
+        ret.pop('_id', None)
+        
         return {
             'task_id': id,
+            'data': ret
         }
-    
+
     def post(self):
         try:
-            return {'task_id': random.randint(1, 10)}, 201
+            # Save result to MongoDB
+            task_id = save_to_mongodb(self.collection_name, {'caption': ''})
+            file = request.files['image']
+            file.save(f"{upload_path}/{task_id}")
+            send_to_kafka(self.kafka_topic, {'task_id': task_id})
+            
+            return {'task_id': task_id}, 201
         except Exception as error:
             return {'error': str(error)}, 400
 
+# Helper function to generate captions using BLIP model
+def generate_caption(image_path):
+    image = Image.open(image_path).convert("RGB")
+    inputs = processor(images=image, return_tensors="pt")
+    
+    with torch.no_grad():
+        outputs = blip_model.generate(
+            **inputs,
+            max_length=20,
+            num_beams=5,
+            repetition_penalty=2.0
+        )
+    
+    caption = processor.decode(outputs[0], skip_special_tokens=True)
+    return caption
 
 class GenerateText(Resource):
     kafka_topic = 'generate-text'
