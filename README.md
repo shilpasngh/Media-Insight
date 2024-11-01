@@ -18,22 +18,3 @@ docker compose up -d
 
 ## frontend runs on http://localhost:3000
 visit http://localhost:3000 for the ui
-
-
-# backend api endpoint
-DEBUG mode, localhost on port 5000
-Running on http://127.0.0.1:5000
-
-e.x.
-# create the text-to-image task
-```sh
-curl --header "Content-Type: application/json" \
-  -X POST \
-  --data '{"text": "robot"}' \
-  http://127.0.0.1:5000/api/v1/generate-image
-```
-# get the task result
-```sh
-curl -X GET http://127.0.0.1:5000/api/v1/generate-image/${task_id}
-```
-
