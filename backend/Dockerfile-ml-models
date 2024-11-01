@@ -10,14 +10,12 @@ COPY requirements-genai.txt /app/
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r requirements-genai.txt
 
-
+COPY preload_models.py /app/
 ENV HF_HOME="/root/.cache/huggingface"
+RUN python /app/preload_models.py
 
 # Copy the rest of the application code
 COPY . /app
-
-RUN --mount=type=cache,target=/root/.cache/huggingface \
-    python /app/preload_models.py
 
 # Run the consumer
 CMD ["python", "run_consumer.py"]

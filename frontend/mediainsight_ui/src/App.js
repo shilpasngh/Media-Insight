@@ -10,6 +10,7 @@ function App() {
   const [selectedImage, setSelectedImage] = useState(null); // For image upload
   const [caption, setCaption] = useState(''); // For generated caption
   const [captionTaskId, setCaptionTaskId] = useState(null); // Task ID for caption generation
+  const [imageSrc, setImageSrc] = useState(null); // For displaying the uploaded image
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,7 +55,17 @@ function App() {
   };
 
   const handleImageUpload = (e) => {
-    setSelectedImage(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageSrc(reader.result); // Set the image source to the file data
+      };
+      reader.readAsDataURL(file); // Read the file as a data URL
+    }
+
+    setSelectedImage(file);
+    setCaption(''); // Clear previous caption
   };
 
   const handleCaptionSubmit = async (e) => {
@@ -181,6 +192,12 @@ function App() {
           {loading ? 'Generating Caption...' : 'Generate Caption'}
         </button>
       </form>
+      {imageSrc && (
+        <div>
+          <h4>Image Preview:</h4>
+          <img src={imageSrc} alt="Selected" style={{ maxWidth: "100%", maxHeight: "300px" }} />
+        </div>
+      )}
 
       {caption && (
         <div>

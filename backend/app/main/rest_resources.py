@@ -49,7 +49,7 @@ class Text2Image(Resource):
         ret = get_task_from_mongodb(self.collection_name, id)
         ret.pop('_id', None)
         if 'image' in ret:
-            ret['image'] = f"http://localhost:5000/static/images/{ret['image']}"
+            ret['image'] = f"/api/v1/static/images/{ret['image']}"
         return {
             'task_id': id,
             'data': ret
@@ -82,11 +82,16 @@ class GenerateDescription(Resource):
 
     def post(self):
         try:
-            # Save result to MongoDB
-            task_id = save_to_mongodb(self.collection_name, {'caption': ''})
             file = request.files['image']
-            file.save(f"{upload_path}/{task_id}")
-            send_to_kafka(self.kafka_topic, {'task_id': task_id})
+            # get file extension
+            _, file_extension = os.path.splitext(file.filename)
+            if not file_extension:
+                file_extension = '.png'
+            # Save result to MongoDB
+            task_id = save_to_mongodb(self.collection_name, {'caption': '', 'ext': file_extension})
+            
+            file.save(f"{upload_path}/{task_id}{file_extension}")
+            send_to_kafka(self.kafka_topic, {'task_id': task_id, 'ext': file_extension})
             
             return {'task_id': task_id}, 201
         except Exception as error:

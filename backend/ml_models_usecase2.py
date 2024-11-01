@@ -13,7 +13,7 @@ class GenerateDescriptionModel(TaskModel):
 
     def generate_description_task(self, data):
         # Save the uploaded image
-        image_path = f"{data['task_id']}"
+        image_path = f"{data['task_id']}{data['ext']}"
         image_full_path = os.path.join(basedir, "static/descriptions_images", image_path)
 
         # Generate the caption

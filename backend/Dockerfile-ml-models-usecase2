@@ -10,14 +10,12 @@ COPY requirements-usecase2.txt /app/
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r requirements-usecase2.txt
 
-
+COPY preload_models_usecase2.py /app/
 ENV HF_HOME="/root/.cache/huggingface"
+RUN python /app/preload_models_usecase2.py
 
 # Copy the rest of the application code
 COPY . /app
-
-RUN --mount=type=cache,target=/root/.cache/huggingface \
-    python /app/preload_models_usecase2.py
 
 # Run the consumer
 CMD ["python", "run_consumer_usecase2.py"]
