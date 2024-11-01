@@ -144,6 +144,8 @@ function App() {
           <p>Processing... Please wait.</p>
         </div>
       )}
+      <div class="container">
+      <div>
       <h1>Text to Image Generator</h1>
       <form onSubmit={handleSubmit}>
         <textarea
@@ -176,9 +178,12 @@ function App() {
           Fetch Image
         </button>
       </form>
+      
 
       {imageUrl && <img src={imageUrl} alt="Generated" />}
-
+      </div>
+      
+      <div>
       <h1>Image Caption Generator</h1>
       <form onSubmit={handleCaptionSubmit}>
         <input
@@ -205,6 +210,8 @@ function App() {
           <p>{caption}</p>
         </div>
       )}
+      </div>
+      </div>
     </div>
   );
 }
