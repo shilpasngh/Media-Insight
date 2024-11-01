@@ -16,6 +16,23 @@ services:
       - kafka
     volumes:
       - ./backend:/app
+  ml_models_usecase2:
+    image: kkzxak47/ml_models_usecase2_mediainsight:latest
+    container_name: ml_models_usecase2_mediainsight
+    build:
+      context: ./backend
+      dockerfile: Dockerfile-ml-models-usecase2
+    environment:
+      - MONGODB_URI=mongodb://mongoadmin:mongosecret@mongodb:27017/
+      - MONGODB_DB=mediainsight
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9094
+    networks:
+      - mediainsight_network
+    depends_on:
+      - mongodb
+      - kafka
+    volumes:
+      - ./backend:/app
   web:
     image: kkzxak47/flask_mediainsight:latest
     container_name: flask_mediainsight

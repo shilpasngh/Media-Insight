@@ -91,7 +91,7 @@ function App() {
       const response = await fetch(`/api/v1/generate-description/${captionTaskId}`);
       const data = await response.json();
 
-      if (data.data && data.data.caption !== undefined) {
+      if (data.data && data.data.caption !== undefined && data.data.caption !== "") {
         setCaption(data.data.caption);
         setLoading(false);
         clearInterval(interval); // Stop polling when the caption is ready

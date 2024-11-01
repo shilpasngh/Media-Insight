@@ -5,10 +5,10 @@ FROM python:3.12-slim
 WORKDIR /app
 
 # Copy the requirements.txt file and install dependencies
-COPY requirements-genai.txt /app/
+COPY requirements-usecase2.txt /app/
 
 RUN --mount=type=cache,target=/root/.cache/pip \
-    pip install -r requirements-genai.txt
+    pip install -r requirements-usecase2.txt
 
 
 ENV HF_HOME="/root/.cache/huggingface"
@@ -17,8 +17,7 @@ ENV HF_HOME="/root/.cache/huggingface"
 COPY . /app
 
 RUN --mount=type=cache,target=/root/.cache/huggingface \
-    python /app/preload_models.py
+    python /app/preload_models_usecase2.py
 
 # Run the consumer
-CMD ["python", "run_consumer.py"]
-
+CMD ["python", "run_consumer_usecase2.py"]

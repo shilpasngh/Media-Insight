@@ -1,33 +1,9 @@
-import os
-import logging
-from abc import ABC, abstractmethod
-from config import Config
-from dotenv import load_dotenv
-import pymongo
-import torch
 from diffusers import AmusedPipeline
+from ml_model_base import TaskModel, basedir, db
 from bson import ObjectId
-from preload_models import blip_model, processor  # Import preloaded BLIP model and processor
-from PIL import Image
+import torch
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-path = os.path.join(basedir, '.env')
-load_dotenv(path)
-upload_path = os.path.join(basedir, 'static/descriptions_images/')
 
-client = pymongo.MongoClient(Config.MONGODB_URI)
-db = client[Config.MONGODB_DB]
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-class TaskModel(ABC):
-    def __init__(self, message_data):
-        self.message_data = message_data
-    
-    @abstractmethod
-    def run(self):
-        pass
 
 # Use Case 1: Generate an image from a text prompt
 class Text2ImageModel(TaskModel):
@@ -63,44 +39,6 @@ class Text2ImageModel(TaskModel):
 
         self.update_task(data['task_id'], image_path)
 
-# Use Case 2: Generate a description from an image
-class GenerateDescriptionModel(TaskModel):
-    def run(self):
-        self.generate_description_task(self.message_data)
-
-    def generate_description_task(self, data):
-        # Save the uploaded image
-        image_path = f"{data['task_id']}"
-        image_full_path = os.path.join(basedir, "static/descriptions_images", image_path)
-
-        # Generate the caption
-        caption = self.generate_caption(image_full_path)
-
-        # Save the generated caption and image path in MongoDB
-        self.update_task(data['task_id'], caption)
-
-    def update_task(self, _id, caption):
-        collection = db['generate-description']
-        collection.update_one(
-            {'_id': ObjectId(_id)},
-            {'$set': {'caption': caption}}
-        )
-
-    def generate_caption(self, image_path):
-        # Open the image, process it, and generate a caption
-        image = Image.open(image_path).convert("RGB")
-        inputs = processor(images=image, return_tensors="pt")
-        
-        with torch.no_grad():
-            outputs = blip_model.generate(
-                **inputs,
-                max_length=20,
-                num_beams=5,
-                repetition_penalty=2.0
-            )
-        
-        caption = processor.decode(outputs[0], skip_special_tokens=True)
-        return caption
 
 # Use Case 3: Summarize a text
 class GenerateTextModel(TaskModel):
