@@ -30,6 +30,13 @@
   100% { transform: rotate(360deg); }
 }
 
+.container {
+  display: flex;
+  justify-content: space-evenly;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px;
+}
 p {
   color: #3498db;
   font-size: 18px;
