@@ -5,13 +5,12 @@ from config import Config
 
 
 from ml_model import logger
-from ml_model.ml_models import Text2ImageModel
-
+from ml_model.ml_models_usecase3 import GenerateTextModel
 
 model_mapping = {
-    'text2image': Text2ImageModel,
+    # 'text2image': Text2ImageModel,
     # 'generate-description': GenerateDescriptionModel,
-    # 'generate-text': GenerateTextModel,
+    'generate-text': GenerateTextModel,
 }
 
 
@@ -28,10 +27,10 @@ def kafka_consumer():
     consumer = Consumer(consumer_config)
 
     # Subscribe to the topic
-    consumer.subscribe(['text2image'])
+    consumer.subscribe(['generate-text'])
 
     try:
-        logger.info('Starting consumer')
+        logger.info('Starting consumer usecase 3')
         while True:
             # Poll for messages
             msg = consumer.poll(1.0)

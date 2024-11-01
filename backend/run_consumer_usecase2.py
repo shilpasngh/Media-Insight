@@ -5,12 +5,12 @@ from config import Config
 
 
 from ml_model import logger
-from ml_model.ml_models import Text2ImageModel
+from ml_model.ml_models_usecase2 import GenerateDescriptionModel
 
 
 model_mapping = {
-    'text2image': Text2ImageModel,
-    # 'generate-description': GenerateDescriptionModel,
+    # 'text2image': Text2ImageModel,
+    'generate-description': GenerateDescriptionModel,
     # 'generate-text': GenerateTextModel,
 }
 
@@ -28,10 +28,10 @@ def kafka_consumer():
     consumer = Consumer(consumer_config)
 
     # Subscribe to the topic
-    consumer.subscribe(['text2image'])
+    consumer.subscribe(['generate-description'])
 
     try:
-        logger.info('Starting consumer')
+        logger.info('Starting consumer usecase 2')
         while True:
             # Poll for messages
             msg = consumer.poll(1.0)
@@ -47,7 +47,7 @@ def kafka_consumer():
                 # Process the message
                 try:
                     message_data = json.loads(msg.value().decode('utf-8'))
-                    logger.info(f'Received message: {message_data}')
+                    logger.info(f'usecase 2 Received message: {message_data}')
 
                     # Process the message here (e.g., generate image from prompt)
                     # ...
@@ -65,9 +65,9 @@ def kafka_consumer():
                     logger.error(f'Error processing message: {str(e)}')
 
     except KeyboardInterrupt:
-        logger.info('Consumer stopped by user')
+        logger.info('Consumer usecase 2 stopped by user')
     finally:
-        logger.info('Closing consumer')
+        logger.info('Closing consumer usecase 2')
         # Close the consumer
         consumer.close()
 

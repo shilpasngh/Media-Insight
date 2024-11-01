@@ -7,6 +7,10 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [taskId, setTaskId] = useState(null);
   const [manualTaskId, setManualTaskId] = useState('');
+  const [selectedImage, setSelectedImage] = useState(null); // For image upload
+  const [caption, setCaption] = useState(''); // For generated caption
+  const [captionTaskId, setCaptionTaskId] = useState(null); // Task ID for caption generation
+  const [imageSrc, setImageSrc] = useState(null); // For displaying the uploaded image
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,15 +54,74 @@ function App() {
     setLoading(false);
   };
 
-  // Poll the server continuously until the image is ready
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageSrc(reader.result); // Set the image source to the file data
+      };
+      reader.readAsDataURL(file); // Read the file as a data URL
+    }
+
+    setSelectedImage(file);
+    setCaption(''); // Clear previous caption
+  };
+
+  const handleCaptionSubmit = async (e) => {
+    e.preventDefault();
+    if (!selectedImage) return;
+
+    setLoading(true);
+    setCaption(''); // Clear previous caption
+
+    // Prepare form data to send the image to the server
+    const formData = new FormData();
+    formData.append('image', selectedImage);
+
+    // Make an API request to upload the image and generate a caption
+    const response = await fetch('/api/v1/generate-description', {
+      method: 'POST',
+      body: formData,
+    });
+    const data = await response.json();
+
+    // The server returns a task ID for polling
+    setCaptionTaskId(data.task_id);
+  };
+
+  // Poll the server continuously until the caption is ready
   useEffect(() => {
-    if (!taskId) {
-      console.log('no task id set yet');
+    if (!captionTaskId) {
+      console.log('No caption task id set yet');
       return;
     }
 
     const interval = setInterval(async () => {
-      console.log(`polling ${taskId}`);
+      console.log(`Polling caption for task ID ${captionTaskId}`);
+      const response = await fetch(`/api/v1/generate-description/${captionTaskId}`);
+      const data = await response.json();
+
+      if (data.data && data.data.caption !== undefined && data.data.caption !== "") {
+        setCaption(data.data.caption);
+        setLoading(false);
+        clearInterval(interval); // Stop polling when the caption is ready
+        console.log(`Caption ready: ${data.data.caption}`);
+      }
+    }, 1000); // Poll every second
+
+    return () => clearInterval(interval);
+  }, [captionTaskId]);
+
+  // Poll the server continuously until the image is ready
+  useEffect(() => {
+    if (!taskId) {
+      console.log('No task id set yet');
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      console.log(`Polling ${taskId}`);
       const response = await fetch(`/api/v1/generate-image/${taskId}`);
       const data = await response.json();
 
@@ -66,7 +129,7 @@ function App() {
         setImageUrl(data.data.image);
         setLoading(false);
         clearInterval(interval); // Stop polling when the image is ready
-        console.log(`image ready ${data.data.image}`);
+        console.log(`Image ready ${data.data.image}`);
       }
     }, 1000); // Poll every second
 
@@ -78,7 +141,7 @@ function App() {
       {loading && (
         <div className="overlay">
           <div className="spinner"></div>
-          <p>Generating Image... Please wait.</p>
+          <p>Processing... Please wait.</p>
         </div>
       )}
       <h1>Text to Image Generator</h1>
@@ -98,7 +161,7 @@ function App() {
           {loading ? 'Generating...' : 'Generate Image'}
         </button>
       </form>
-      
+
       <h2>Fetch Image by Task ID</h2>
       <form onSubmit={handleManualFetch}>
         <input
@@ -113,8 +176,35 @@ function App() {
           Fetch Image
         </button>
       </form>
-      
+
       {imageUrl && <img src={imageUrl} alt="Generated" />}
+
+      <h1>Image Caption Generator</h1>
+      <form onSubmit={handleCaptionSubmit}>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          required
+          disabled={loading} // Disable input when loading
+        />
+        <button type="submit" disabled={loading}>
+          {loading ? 'Generating Caption...' : 'Generate Caption'}
+        </button>
+      </form>
+      {imageSrc && (
+        <div>
+          <h4>Image Preview:</h4>
+          <img src={imageSrc} alt="Selected" style={{ maxWidth: "100%", maxHeight: "300px" }} />
+        </div>
+      )}
+
+      {caption && (
+        <div>
+          <h2>Generated Caption:</h2>
+          <p>{caption}</p>
+        </div>
+      )}
     </div>
   );
 }
