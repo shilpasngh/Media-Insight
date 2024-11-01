@@ -1,5 +1,5 @@
 from diffusers import AmusedPipeline
-from ml_model_base import TaskModel, basedir, db
+from ml_model import TaskModel, basedir, db
 from bson import ObjectId
 import torch
 
@@ -38,9 +38,3 @@ class Text2ImageModel(TaskModel):
         image.save(f"{basedir}/static/images/" + image_path)
 
         self.update_task(data['task_id'], image_path)
-
-
-# Use Case 3: Summarize a text
-class GenerateTextModel(TaskModel):
-    def run(self):
-        pass

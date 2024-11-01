@@ -4,8 +4,8 @@ import json
 from config import Config
 
 
-from ml_model_base import logger
-from ml_models import Text2ImageModel
+from ml_model import logger
+from ml_model.ml_models import Text2ImageModel
 
 
 model_mapping = {

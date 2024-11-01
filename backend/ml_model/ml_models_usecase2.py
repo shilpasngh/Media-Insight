@@ -1,5 +1,5 @@
 import os
-from ml_model_base import TaskModel, basedir, db
+from ml_model import TaskModel, basedir, db
 from preload_models_usecase2 import blip_model, processor  # Import preloaded BLIP model and processor
 from PIL import Image
 from bson import ObjectId

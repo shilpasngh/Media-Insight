@@ -4,8 +4,8 @@ import json
 from config import Config
 
 
-from ml_models import logger, GenerateTextModel
-
+from ml_model import logger
+from ml_model.ml_models_usecase3 import GenerateTextModel
 
 model_mapping = {
     # 'text2image': Text2ImageModel,

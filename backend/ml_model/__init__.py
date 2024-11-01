@@ -5,8 +5,8 @@ from config import Config
 from dotenv import load_dotenv
 import pymongo
 
+from config import basedir
 
-basedir = os.path.abspath(os.path.dirname(__file__))
 path = os.path.join(basedir, '.env')
 load_dotenv(path)
 upload_path = os.path.join(basedir, 'static/descriptions_images/')

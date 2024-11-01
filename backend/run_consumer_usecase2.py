@@ -4,8 +4,8 @@ import json
 from config import Config
 
 
-from ml_model_base import logger
-from ml_models_usecase2 import GenerateDescriptionModel
+from ml_model import logger
+from ml_model.ml_models_usecase2 import GenerateDescriptionModel
 
 
 model_mapping = {
