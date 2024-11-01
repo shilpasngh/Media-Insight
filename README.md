@@ -8,7 +8,7 @@ All of the services are containerized now.
 
 Install Docker: [Docker.com](https://www.docker.com/)
 
-## Start the services (Please make sure ports 3000, 5000, 8080, 9092, 27017 are available)
+## Start the services (Please make sure ports 3000 is available)
 
 ```sh
 docker compose up -d
