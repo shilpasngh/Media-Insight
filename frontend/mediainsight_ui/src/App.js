@@ -29,6 +29,7 @@ function App() {
 
     // The server returns a task ID for polling
     setTaskId(data.task_id);
+    setManualTaskId(data.task_id); // Set the task ID for manual fetch
   };
 
   const handleManualFetch = async (e) => {
