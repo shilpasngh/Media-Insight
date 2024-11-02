@@ -170,6 +170,7 @@ function App() {
       <h2>Fetch Image by Task ID</h2>
       <form onSubmit={handleManualFetch}>
         <input
+          className="manual-taskid-input" 
           type="text"
           value={manualTaskId}
           onChange={(e) => setManualTaskId(e.target.value)}
