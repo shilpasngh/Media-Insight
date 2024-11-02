@@ -45,6 +45,8 @@ function App() {
       } else {
         console.error('Image not found for the given task ID');
         // You might want to add some user feedback here
+        // if task id is not found, we need to show the user that the task id is not found
+        alert('Task ID not found');
       }
     } catch (error) {
       console.error('Error fetching image:', error);
