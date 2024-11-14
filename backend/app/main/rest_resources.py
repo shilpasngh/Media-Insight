@@ -110,21 +110,6 @@ class GenerateDescription(Resource):
         except Exception as error:
             return {'error': str(error)}, 400
 
-# Helper function to generate captions using BLIP model
-def generate_caption(image_path):
-    image = Image.open(image_path).convert("RGB")
-    inputs = processor(images=image, return_tensors="pt")
-    
-    with torch.no_grad():
-        outputs = blip_model.generate(
-            **inputs,
-            max_length=20,
-            num_beams=5,
-            repetition_penalty=2.0
-        )
-    
-    caption = processor.decode(outputs[0], skip_special_tokens=True)
-    return caption
 
 class GenerateText(Resource):
     kafka_topic = 'generate-text'
