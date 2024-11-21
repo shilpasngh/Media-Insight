@@ -1,7 +1,7 @@
 # Media-Insight
-Use case 1: Text-to-Image Generation
-Use case 2: Image Captioin Generation
-Use case 3: Text Summarization (Extractive and Abstractive Summarization)
+### Use case 1: Text-to-Image Generation
+### Use case 2: Image Captioin Generation
+### Use case 3: Text Summarization (Extractive and Abstractive Summarization)
 
 
 # How to start
