@@ -1,6 +1,7 @@
 # Media-Insight
 Use case 1: Text-to-Image Generation
 Use case 2: Image Captioin Generation
+Use case 3: Text Summarization (Extractive and Abstractive Summarization)
 
 
 # How to start
@@ -19,3 +20,7 @@ docker compose up -d
 
 ## frontend runs on http://localhost:3000
 visit http://localhost:3000 for the ui
+
+
+Model Architecture
+
