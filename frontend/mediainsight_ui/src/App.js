@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './App.css'; // Include CSS for overlay
 
 function App() {
+  const [summaryInput, setSummaryInput] = useState('');
+  const [summary, setSummary] = useState('');
+  const [summaryTaskId, setSummaryTaskId] = useState(null);
+  
   const [inputText, setInputText] = useState('');
   const [imageUrl, setImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -11,6 +15,28 @@ function App() {
   const [caption, setCaption] = useState(''); // For generated caption
   const [captionTaskId, setCaptionTaskId] = useState(null); // Task ID for caption generation
   const [imageSrc, setImageSrc] = useState(null); // For displaying the uploaded image
+
+  const handleSummarySubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setSummary('');
+  
+      try {
+        const response = await fetch('/api/v1/summarize-text', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 'prompt': summaryInput }),
+        });
+        const data = await response.json();
+        setSummaryTaskId(data.task_id);
+      } catch (error) {
+        console.error('Error submitting text:', error);
+        setLoading(false);
+      }
+    };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -92,6 +118,25 @@ function App() {
     // The server returns a task ID for polling
     setCaptionTaskId(data.task_id);
   };
+
+  // Poll the server continuously until the summary is ready
+  useEffect(() => {
+    if (!summaryTaskId) return;
+
+    const interval = setInterval(async () => {
+      console.log(`Polling summary for task ID ${summaryTaskId}`);
+      const response = await fetch(`/api/v1/summarize-text/${summaryTaskId}`);
+      const data = await response.json();
+
+      if (data.data && data.data.summary !== undefined) {
+        setSummary(data.data.summary);
+        setLoading(false);
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [summaryTaskId]);
 
   // Poll the server continuously until the caption is ready
   useEffect(() => {
@@ -215,6 +260,32 @@ function App() {
         </div>
       )}
       </div>
+
+      <div>
+          <h1>Summary Generator</h1>
+          <form onSubmit={handleSummarySubmit}>
+            <textarea
+              value={summaryInput}
+              onChange={(e) => setSummaryInput(e.target.value)}
+              placeholder="Please enter the text to generate summary"
+              required
+              disabled={loading}
+              rows={5}
+              cols={60}
+              className="large-input"
+            />
+            <button type="submit" disabled={loading}>
+              {loading ? 'Generating summary...' : 'Generate Summary'}
+            </button>
+          </form>
+
+          {summary && (
+            <div>
+              <h2>Generated Summary:</h2>
+              <p>{summary}</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -5,12 +5,12 @@ from config import Config
 
 
 from ml_model import logger
-from ml_model.ml_models_usecase3 import GenerateTextModel
+from ml_model.ml_models_usecase3 import GenerateSummaryModel
 
 model_mapping = {
     # 'text2image': Text2ImageModel,
     # 'generate-description': GenerateDescriptionModel,
-    'generate-text': GenerateTextModel,
+    'generate-text': GenerateSummaryModel,
 }
 
 

@@ -116,10 +116,26 @@ class GenerateText(Resource):
     collection_name = kafka_topic
 
     def get(self, id=None):
-        return {'task_id': id }
+        try:
+            ret = get_task_from_mongodb(self.collection_name, id)
+            ret.pop('_id', None)
+        except Exception as e:
+            logger.exception(str(e))
+            return {'task_id': id, 'data': {}, 'msg': 'Task not found'}, 404
+        
+        return {
+            'task_id': id,
+            'data': ret
+        }
     
     def post(self):
         try:
-            return {'task_id': random.randint(1, 10)}, 201
+            # get prompt text from request
+            prompt = request.json['prompt']
+            # save task to MongoDB
+            task_id = save_to_mongodb(self.collection_name, {'prompt': prompt})
+            # publish task to Kafka
+            send_to_kafka(self.kafka_topic, {'task_id': task_id, 'prompt': prompt})
+            return {'task_id': task_id}, 201
         except Exception as error:
             return {'error': str(error)}, 400
