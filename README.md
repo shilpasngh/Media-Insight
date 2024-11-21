@@ -24,6 +24,6 @@ visit http://localhost:3000 for the ui
 
 # Model Architecture
 
-<img width="377" alt="image" src="https://github.com/user-attachments/assets/c30d1dc6-cdec-48b0-98fa-b0445ce6d481">
+![WhatsApp Image 2024-11-21 at 17 47 24_281a0338](https://github.com/user-attachments/assets/a24dc39a-049a-4161-912f-ed8b7efddfd2)
 
 
