@@ -22,5 +22,8 @@ docker compose up -d
 visit http://localhost:3000 for the ui
 
 
-Model Architecture
+# Model Architecture
+
+<img width="585" alt="Model Architecture" src="https://github.com/user-attachments/assets/3821f2c6-e244-40c3-83ce-a11ca2e861b3">
+
 
