@@ -8,7 +8,9 @@ function App() {
   
   const [inputText, setInputText] = useState('');
   const [imageUrl, setImageUrl] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [text2imageLoading, setText2imageLoading] = useState(false);
+  const [captionLoading, setCaptionLoading] = useState(false);
+  const [summaryLoading, setSummaryLoading] = useState(false);
   const [taskId, setTaskId] = useState(null);
   const [manualTaskId, setManualTaskId] = useState('');
   const [selectedImage, setSelectedImage] = useState(null); // For image upload
@@ -16,11 +18,24 @@ function App() {
   const [captionTaskId, setCaptionTaskId] = useState(null); // Task ID for caption generation
   const [imageSrc, setImageSrc] = useState(null); // For displaying the uploaded image
 
+  const [copySuccess, setCopySuccess] = useState(false);
+
+  const handleCopy = async(text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  }
+
   const handleSummarySubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setSummaryLoading(true);
     setSummary('');
   
+      // Make an API request to send the text input to the server
       try {
         const response = await fetch('/api/v1/summarize-text', {
           method: 'POST',
@@ -33,14 +48,14 @@ function App() {
         setSummaryTaskId(data.task_id);
       } catch (error) {
         console.error('Error submitting text:', error);
-        setLoading(false);
+        setSummaryLoading(false);
       }
     };
   
 
-  const handleSubmit = async (e) => {
+  const handleText2imageSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setText2imageLoading(true);
     setImageUrl(null); // Clear previous image
 
     // Make an API request to send the text input to the server
@@ -60,7 +75,7 @@ function App() {
 
   const handleManualFetch = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setText2imageLoading(true);
     setImageUrl(null);
 
     try {
@@ -71,16 +86,14 @@ function App() {
         setImageUrl(data.data.image);
       } else {
         console.error('Image not found for the given task ID');
-        // You might want to add some user feedback here
-        // if task id is not found, we need to show the user that the task id is not found
         alert('Task ID not found');
       }
     } catch (error) {
       console.error('Error fetching image:', error);
-      // You might want to add some user feedback here
+      alert('Error fetching image');
     }
 
-    setLoading(false);
+    setText2imageLoading(false);
   };
 
   const handleImageUpload = (e) => {
@@ -101,7 +114,7 @@ function App() {
     e.preventDefault();
     if (!selectedImage) return;
 
-    setLoading(true);
+    setCaptionLoading(true);
     setCaption(''); // Clear previous caption
 
     // Prepare form data to send the image to the server
@@ -130,7 +143,7 @@ function App() {
 
       if (data.data && data.data.summary !== undefined) {
         setSummary(data.data.summary);
-        setLoading(false);
+        setSummaryLoading(false);
         clearInterval(interval);
       }
     }, 1000);
@@ -152,7 +165,7 @@ function App() {
 
       if (data.data && data.data.caption !== undefined && data.data.caption !== "") {
         setCaption(data.data.caption);
-        setLoading(false);
+        setCaptionLoading(false);
         clearInterval(interval); // Stop polling when the caption is ready
         console.log(`Caption ready: ${data.data.caption}`);
       }
@@ -175,7 +188,7 @@ function App() {
 
       if (data.data.image !== undefined) {
         setImageUrl(data.data.image);
-        setLoading(false);
+        setText2imageLoading(false);
         clearInterval(interval); // Stop polling when the image is ready
         console.log(`Image ready ${data.data.image}`);
       }
@@ -186,106 +199,137 @@ function App() {
 
   return (
     <div className="App">
-      {loading && (
-        <div className="overlay">
-          <div className="spinner"></div>
-          <p>Processing... Please wait.</p>
-        </div>
-      )}
+      <div className="header">
+        <h1>MediaInsight</h1>
+      </div>
       <div class="container">
-      <div>
-      <h1>Text to Image Generator</h1>
-      <form onSubmit={handleSubmit}>
-        <textarea
-          type="text"
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder="Enter text to generate image"
-          required
-          disabled={loading} // Disable input when loading
-          rows={3}
-          cols={60}
-          className="large-input"
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Generating...' : 'Generate Image'}
-        </button>
-      </form>
+        {/* Text to Image Section */}
+        <div className="feature-card">
+          {text2imageLoading && (
+            <div className="overlay">
+              <div className="spinner"></div>
+              <p>Processing... Please wait.</p>
+            </div>
+          )}
+          <h2>Text to Image Generator</h2>
+          <div className="input-area">
+            <form onSubmit={handleText2imageSubmit}>
+              <textarea
+                type="text"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                placeholder="Enter text to generate image"
+                required
+                disabled={text2imageLoading} // Disable input when loading
+                rows={3}
+                cols={60}
+                className="text-input"
+              />
+              <button className="button-primary" type="submit" disabled={text2imageLoading}>
+                {text2imageLoading ? 'Generating...' : 'Generate Image'}
+              </button>
+            </form>
+          </div>
 
-      <h2>Fetch Image by Task ID</h2>
-      <form onSubmit={handleManualFetch}>
-        <input
-          className="manual-taskid-input" 
-          type="text"
-          value={manualTaskId}
-          onChange={(e) => setManualTaskId(e.target.value)}
-          placeholder="Enter task ID"
-          required
-          disabled={loading}
-        />
-        <button type="submit" disabled={loading}>
-          Fetch Image
-        </button>
-      </form>
-      
+          <h2>Fetch Image by Task ID</h2>
+          <div className="input-area">
+            <form onSubmit={handleManualFetch}>
+              <input
+                className="manual-taskid-input" 
+                type="text"
+                value={manualTaskId}
+                onChange={(e) => setManualTaskId(e.target.value)}
+                placeholder="Enter task ID"
+                required
+                disabled={text2imageLoading}
+              />
+              <button className="button-primary" type="submit" disabled={text2imageLoading}>
+                Fetch Image
+              </button>
+            </form>
+          </div>
 
-      {imageUrl && <img src={imageUrl} alt="Generated" />}
-      </div>
-      
-      <div>
-      <h1>Image Caption Generator</h1>
-      <form onSubmit={handleCaptionSubmit}>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageUpload}
-          required
-          disabled={loading} // Disable input when loading
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Generating Caption...' : 'Generate Caption'}
-        </button>
-      </form>
-      {imageSrc && (
-        <div>
-          <h4>Image Preview:</h4>
-          <img src={imageSrc} alt="Selected" style={{ maxWidth: "100%", maxHeight: "300px" }} />
-        </div>
-      )}
-
-      {caption && (
-        <div>
-          <h2>Generated Caption:</h2>
-          <p>{caption}</p>
-        </div>
-      )}
-      </div>
-
-      <div>
-          <h1>Summary Generator</h1>
-          <form onSubmit={handleSummarySubmit}>
-            <textarea
-              value={summaryInput}
-              onChange={(e) => setSummaryInput(e.target.value)}
-              placeholder="Please enter the text to generate summary"
-              required
-              disabled={loading}
-              rows={5}
-              cols={60}
-              className="large-input"
-            />
-            <button type="submit" disabled={loading}>
-              {loading ? 'Generating summary...' : 'Generate Summary'}
-            </button>
-          </form>
-
-          {summary && (
-            <div>
-              <h2>Generated Summary:</h2>
-              <p>{summary}</p>
+          {imageUrl && (
+            <div className="result-area">
+            <img src={imageUrl} alt="Generated" className="generated-image" />
             </div>
           )}
         </div>
+      
+        {/* Image Caption Section */}
+        <div className="feature-card">
+          {captionLoading && (
+            <div className="overlay">
+              <div className="spinner"></div>
+              <p>Processing... Please wait.</p>
+            </div>
+          )}
+          <h2>Image Caption Generator</h2>
+          <div className="input-area">
+            <form onSubmit={handleCaptionSubmit}>
+              <div className="file-upload-container"> 
+                <input
+                  type="file"
+                  id="file-upload"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="file-input"
+                  required
+                  disabled={captionLoading}
+                />
+                <label htmlFor="file-upload" className="file-upload-label">
+                  <div className="upload-content">
+                    <span className="upload-icon">📁</span>
+                    <span className="upload-text">Choose File or Drag & Drop</span>
+                  </div>
+                </label>
+              </div>
+              <button className="button-primary" type="submit" disabled={captionLoading}>
+                {captionLoading ? 'Generating...' : 'Generate Caption'}
+              </button>
+            </form>
+          </div>
+          {imageSrc && (
+            <div className="result-area">
+              <img src={imageSrc} alt="Selected" className="preview-image" />
+              {caption && <p className="caption-text">{caption}</p>}
+            </div>
+          )}
+        </div>  
+
+        {/* Summary Generator Section */}
+        <div className="feature-card">
+          {summaryLoading && (
+            <div className="overlay">
+              <div className="spinner"></div>
+              <p>Processing... Please wait.</p>
+            </div>
+          )}
+          <h2>Summary Generator</h2>
+          <div className="input-area">
+            <form onSubmit={handleSummarySubmit}>
+              <textarea
+                value={summaryInput}
+                onChange={(e) => setSummaryInput(e.target.value)}
+                placeholder="Enter text to summarize"
+                required
+                disabled={summaryLoading}
+                className="text-input"
+              />
+              <button className="button-primary" type="submit" disabled={summaryLoading}>
+                {summaryLoading ? 'Generating...' : 'Generate Summary'}
+              </button>
+            </form>
+          </div>
+          {summary && (
+            <div className="result-area">
+              <p className="summary-text">{summary}</p>
+            </div>
+          )}
+          <button className="copy-button" onClick={() => handleCopy(summary)}>
+            {copySuccess ? 'Copied!' : 'Copy'}
+          </button>
+        </div>  
       </div>
     </div>
   );
