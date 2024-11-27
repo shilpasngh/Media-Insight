@@ -14,10 +14,11 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker images
+      - name: Build and push flask Docker image
+        working-directory: backend
         run: |
-          docker compose build
-      
+          docker build -f Dockerfile -t ${{ vars.DOCKERHUB_USERNAME }}/flask_mediainsight .
+
       - name: Push Docker images
         run: |
-          docker compose push
+          docker push ${{ vars.DOCKERHUB_USERNAME }}/flask_mediainsight
