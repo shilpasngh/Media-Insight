@@ -34,7 +34,7 @@ services:
     volumes:
       - ./backend:/app
   ml_models_usecase3:
-    # image: kkzxak47/ml_models_usecase2_mediainsight:latest
+    image: kkzxak47/ml_models_usecase3_mediainsight:latest
     container_name: ml_models_usecase3_mediainsight
     build:
       context: ./backend
