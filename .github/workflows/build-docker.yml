@@ -1,5 +1,13 @@
+name: Build and push Docker images (Flask and React app)
+
+# currently only flask web app and react images are being built and pushed
+# The disk space provided by GitHub Actions is limited to 10GB for free plan, models are too large for this space
+
 on:
-  [workflow_dispatch]
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
 
 jobs:
   publish_images:
@@ -14,11 +22,22 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push flask Docker image
+      - name: Build flask Docker image
         working-directory: backend
         run: |
-          docker build -f Dockerfile -t ${{ vars.DOCKERHUB_USERNAME }}/flask_mediainsight .
+          docker build -f Dockerfile -t ${{ vars.DOCKERHUB_USERNAME }}/flask_mediainsight:latest .
 
-      - name: Push Docker images
+      - name: Push flask Docker image
+        working-directory: backend
         run: |
-          docker push ${{ vars.DOCKERHUB_USERNAME }}/flask_mediainsight
+          docker push ${{ vars.DOCKERHUB_USERNAME }}/flask_mediainsight:latest
+
+      - name: Build react Docker image
+        working-directory: frontend/mediainsight_ui
+        run: |
+          docker build -f Dockerfile -t ${{ vars.DOCKERHUB_USERNAME }}/react_mediainsight:latest .
+
+      - name: Push react Docker image
+        working-directory: frontend/mediainsight_ui
+        run: |
+          docker push ${{ vars.DOCKERHUB_USERNAME }}/react_mediainsight:latest
