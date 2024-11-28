@@ -5,9 +5,9 @@ name: Build and push Docker images (Flask and React app)
 
 on:
   push:
-    branches: ['*']
+    branches: ['main']
   pull_request:
-    branches: ['*']
+    branches: ['main']
 
 jobs:
   publish_images:
