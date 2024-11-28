@@ -22,9 +22,6 @@ jobs:
         image: mongodb/mongodb-community-server:latest
         ports:
             - 27017:27017
-        environment:
-          MONGO_INITDB_ROOT_USERNAME: mongoadmin
-          MONGO_INITDB_ROOT_PASSWORD: mongosecret
 
       kafka:
         image: bitnami/kafka:latest
@@ -32,7 +29,7 @@ jobs:
             - 9092:9092
             - 9093:9093
             - 9094:9094
-        environment:
+        env:
           KAFKA_CFG_NODE_ID: 1
           KAFKA_CFG_PROCESS_ROLES: broker,controller
           KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,INTERNAL:PLAINTEXT
@@ -42,8 +39,6 @@ jobs:
           KAFKA_CFG_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
           KAFKA_CFG_INTER_BROKER_LISTENER_NAME: INTERNAL
           ALLOW_PLAINTEXT_LISTENER: "yes"
-        volumes:
-          - kafka_data:/bitnami/kafka/data
           
     steps:
       - uses: actions/checkout@v3
