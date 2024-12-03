@@ -1,4 +1,4 @@
 .idea/
 backend/static/descriptions_images/*
-mlruns/
+mlruns/**
 menv/*
