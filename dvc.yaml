@@ -1,0 +1,43 @@
+stages:
+  prepare:
+    cmd: python scripts/prepare_data.py data/raw data/processed
+    deps:
+      - scripts/prepare_data.py
+      - data/raw
+    outs:
+      - data/processed
+
+  split:
+    cmd: python scripts/split_data.py data/processed data/splits
+    deps:
+      - scripts/split_data.py
+      - data/processed
+    outs:
+      - data/splits
+
+  train:
+    cmd: python scripts/train_model.py data/splits/train models/output params.yaml
+    deps:
+      - scripts/train_model.py
+      - data/splits
+      - params.yaml
+    outs:
+      - models/output
+
+  evaluate:
+    cmd: python scripts/evaluate_model.py models/output data/splits/val metrics/eval.json
+    deps:
+      - scripts/evaluate_model.py
+      - models/output
+      - data/splits
+    outs:
+      - metrics/eval.json
+
+  test:
+    cmd: python scripts/test_model.py models/output data/splits/test metrics/test.json
+    deps:
+      - scripts/test_model.py
+      - models/output
+      - data/splits
+    outs:
+      - metrics/test.json

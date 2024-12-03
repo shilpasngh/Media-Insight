@@ -1,0 +1,14 @@
+data:
+  input_path: data/raw
+  processed_path: data/processed
+  split_path: data/splits
+
+model:
+  learning_rate: 0.001
+  epochs: 10
+  batch_size: 32
+  output_path: models/output
+
+metrics:
+  evaluation_path: metrics/eval.json
+  testing_path: metrics/test.json

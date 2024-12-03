@@ -1,0 +1,15 @@
+artifact_uri: file:///home/invain/source_code/conestoga-applied-ai-2024/2024-fall/INFO8665-24F-Sec1-Projects%20in%20Machine%20Learning/project/Media-Insight/mlruns/0/4c6b27199c434eafab27ab47db2a8826/artifacts
+end_time: 1733203577163
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 4c6b27199c434eafab27ab47db2a8826
+run_name: bouncy-seal-884
+run_uuid: 4c6b27199c434eafab27ab47db2a8826
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1733203577128
+status: 3
+tags: []
+user_id: invain
