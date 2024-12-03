@@ -1,0 +1,101 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python scripts/prepare_data.py data/raw data/processed
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 6ffbaaad7b4ac6e1afabed19a80b2560.dir
+      size: 0
+      nfiles: 1
+    - path: scripts/prepare_data.py
+      hash: md5
+      md5: eb4a71599890478b35fe1d63fcbb6132
+      size: 154
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 6c0052bff79d541f1e48070a897d18ec.dir
+      size: 12
+      nfiles: 1
+  split:
+    cmd: python scripts/split_data.py data/processed data/splits
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 6c0052bff79d541f1e48070a897d18ec.dir
+      size: 12
+      nfiles: 1
+    - path: scripts/split_data.py
+      hash: md5
+      md5: fa037123c3a8a31c0e9cccc4b5ba17eb
+      size: 144
+    outs:
+    - path: data/splits
+      hash: md5
+      md5: 746ed01fb75aadb00e22e4f81b32840a.dir
+      size: 10
+      nfiles: 1
+  train:
+    cmd: python scripts/train_model.py data/splits/train models/output params.yaml
+    deps:
+    - path: data/splits
+      hash: md5
+      md5: 746ed01fb75aadb00e22e4f81b32840a.dir
+      size: 10
+      nfiles: 1
+    - path: params.yaml
+      hash: md5
+      md5: 606dee92fdc8599560be7bbff42d4ba3
+      size: 259
+    - path: scripts/train_model.py
+      hash: md5
+      md5: 92fc51e05ca61bdf7ce6af1f70022e54
+      size: 137
+    outs:
+    - path: models/output
+      hash: md5
+      md5: 79d3e0f95748930a0ae07f9fd97a0732
+      size: 11
+  evaluate:
+    cmd: python scripts/evaluate_model.py models/output data/splits/val metrics/eval.json
+    deps:
+    - path: data/splits
+      hash: md5
+      md5: 746ed01fb75aadb00e22e4f81b32840a.dir
+      size: 10
+      nfiles: 1
+    - path: models/output
+      hash: md5
+      md5: 79d3e0f95748930a0ae07f9fd97a0732
+      size: 11
+    - path: scripts/evaluate_model.py
+      hash: md5
+      md5: c6723f51fc035c149a3684ae1bae875d
+      size: 130
+    outs:
+    - path: metrics/eval.json
+      hash: md5
+      md5: a85fa0cdb122ce77e462967e45a5cb09
+      size: 18
+  test:
+    cmd: python scripts/test_model.py models/output data/splits/test metrics/test.json
+    deps:
+    - path: data/splits
+      hash: md5
+      md5: 746ed01fb75aadb00e22e4f81b32840a.dir
+      size: 10
+      nfiles: 1
+    - path: models/output
+      hash: md5
+      md5: 79d3e0f95748930a0ae07f9fd97a0732
+      size: 11
+    - path: scripts/test_model.py
+      hash: md5
+      md5: 2eb7348a7289fce5328fa1313218e0a4
+      size: 111
+    outs:
+    - path: metrics/test.json
+      hash: md5
+      md5: a85fa0cdb122ce77e462967e45a5cb09
+      size: 18

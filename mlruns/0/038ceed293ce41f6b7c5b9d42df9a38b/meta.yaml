@@ -1,0 +1,15 @@
+artifact_uri: file:///home/invain/source_code/conestoga-applied-ai-2024/2024-fall/INFO8665-24F-Sec1-Projects%20in%20Machine%20Learning/project/Media-Insight/mlruns/0/038ceed293ce41f6b7c5b9d42df9a38b/artifacts
+end_time: 1733203565204
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 038ceed293ce41f6b7c5b9d42df9a38b
+run_name: painted-swan-316
+run_uuid: 038ceed293ce41f6b7c5b9d42df9a38b
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1733203565198
+status: 3
+tags: []
+user_id: invain
