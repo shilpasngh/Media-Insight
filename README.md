@@ -40,3 +40,5 @@ docker-compose -f docker-compose.test.yml up --build test
 # Data pipeline
 ![mlops-project-data-pipeline drawio](https://github.com/user-attachments/assets/7bccfa61-6941-435b-b7ab-3010cc86a469)
 
+# A complete Architecture
+![project-full-architecture](https://github.com/user-attachments/assets/69b7c6ba-1325-41e6-adca-1230c5254035)
